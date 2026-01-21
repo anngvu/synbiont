@@ -72,7 +72,7 @@ sagegov:Anonymized a skos:Concept, sagegov:Data ;
   sagegov:accessLevel sagegov:AnonymousOrOpen ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:HIPAASafeHarbor a skos:Concept, sagegov:AccessProfile, sagegov:Data ;
+sagegov:HIPAASafeHarbor a skos:Concept, sagegov:Data, sagegov:AccessProfile ;
   skos:prefLabel "HIPAA Safe Harbor" ;
   sagegov:identifiabilityRisk sagegov:LowIdentifiabilityRisk ;
   sagegov:accessLevel sagegov:Registered ;
@@ -92,7 +92,7 @@ sagegov:HIPAASafeHarbor a skos:Concept, sagegov:AccessProfile, sagegov:Data ;
   sagegov:approvalProcess "Synapse account" ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:HIPAAExpertDeIdentified a skos:Concept, sagegov:AccessProfile ;
+sagegov:HIPAAExpertDeIdentified a skos:Concept, sagegov:Data ;
   skos:prefLabel "HIPAA Expert de-identified" ;
   dct:description "Data that an expert in statistical and scientific method has determined presents a very small risk to be used to identify an invididual" ;
   sagegov:downloadable true ;
@@ -106,9 +106,10 @@ sagegov:HIPAAExpertDeIdentified a skos:Concept, sagegov:AccessProfile ;
   sagegov:irbApproval false ;
   sagegov:securityRequirements "No" ;
   sagegov:approvalProcess "Synapse account" ;
+  sagegov:accessLevel sagegov:AnonymousOrOpen ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:PseudonymizedGDPR a skos:Concept, sagegov:AccessProfile ;
+sagegov:PseudonymizedGDPR a skos:Concept, sagegov:Data ;
   skos:prefLabel "Pseudonymized (GDPR)" ;
   dct:description "Data where individual identifiers have been replaced by a code or pseudo (false) identifier" ;
   sagegov:downloadable true ;
@@ -122,6 +123,7 @@ sagegov:PseudonymizedGDPR a skos:Concept, sagegov:AccessProfile ;
   sagegov:irbApproval false ;
   sagegov:securityRequirements "No" ;
   sagegov:approvalProcess "Synapse account" ;
+  sagegov:accessLevel sagegov:AnonymousOrOpen ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
 sagegov:RestrictedLimitedProfile a skos:Concept, sagegov:AccessProfile ;
@@ -143,7 +145,7 @@ sagegov:RestrictedLimitedProfile a skos:Concept, sagegov:AccessProfile ;
   sagegov:approvalProcess "Automated Clickwrap" ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:OmicsLargeScaleCoded a skos:Concept, sagegov:AccessProfile ;
+sagegov:OmicsLargeScaleCoded a skos:Concept, sagegov:Data ;
   skos:prefLabel "Omics Large scale, coded" ;
   sagegov:identifiabilityRisk sagegov:SomeIdentifiabilityRisk ;
   sagegov:accessLevel sagegov:Controlled ;
@@ -199,7 +201,7 @@ sagegov:ImagesAndProcessedBiometricsData a skos:Concept, sagegov:Data ;
   sagegov:accessLevel sagegov:AnonymousOrOpen ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:PersonallyIdentifiableInformation a skos:Concept, sagegov:AccessProfile ;
+sagegov:PersonallyIdentifiableInformation a skos:Concept, sagegov:Data ;
   skos:prefLabel "Personally identifiable Information" ;
   sagegov:identifiabilityRisk sagegov:HighIdentifiabilityRisk ;
   sagegov:accessLevel sagegov:Enclave ;

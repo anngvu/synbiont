@@ -47,9 +47,10 @@ HEADER_ROWS = {
     "Request Submission and Approval Steps",
 }
 INTERNAL_COLUMN_KEY = "__column_index__"
-DATA_TYPE_COLUMNS = {1, 2}
+DATA_TYPE_COLUMNS: set[int] = set()
 ALSO_DATA_LABELS = {"hipaa safe harbor"}
 ROW5_DATA_KEY = "__row5_data"
+ROW4_DATA_KEY = "__row4_data"
 ACCESS_LEVEL_NOTE_PRED = "sagegov:accessLevelNote"
 VALUE_STRINGS_TO_SKIP = {
     "** with some exceptions at data contributors discretion",
@@ -227,12 +228,14 @@ def identifiability_risk_defs_block() -> str:
 def collect_profiles(df) -> List[Dict[str, List[str]]]:
     row_labels = df.iloc[:, 0].ffill().apply(lambda v: normalize_text(v) if not pd.isna(v) else v)
     data_type_rows = [idx for idx, label in enumerate(row_labels) if label == "Data Type"]
+    row4_idx = data_type_rows[0] if data_type_rows else None
     row5_idx = data_type_rows[1] if len(data_type_rows) > 1 else None
     profiles: List[Dict[str, List[str]]] = []
     for col in range(1, df.shape[1]):
         series = df.iloc[:, col]
         bucket: Dict[str, List[str]] = {}
         has_row5_data = False
+        has_row4_data = False
         for row_idx, (label, raw_value) in enumerate(zip(row_labels, series)):
             if pd.isna(label) or label in HEADER_ROWS:
                 continue
@@ -248,10 +251,14 @@ def collect_profiles(df) -> List[Dict[str, List[str]]]:
             bucket.setdefault(label_key, []).append(value_text)
             if label_key == "Data Type" and row5_idx is not None and row_idx == row5_idx:
                 has_row5_data = True
+            if label_key == "Data Type" and row4_idx is not None and row_idx == row4_idx:
+                has_row4_data = True
         if any(bucket.values()):
             bucket[INTERNAL_COLUMN_KEY] = col
             if has_row5_data:
                 bucket[ROW5_DATA_KEY] = True
+            if has_row4_data:
+                bucket[ROW4_DATA_KEY] = True
             profiles.append(bucket)
     return profiles
 
@@ -278,7 +285,10 @@ def build_turtle(profiles: List[Dict[str, List[str]]]) -> str:
         alt_labels = [name for name in names[1:] if name != pref_label]
         node_id = camel_case_identifier(pref_label, seen_ids)
         col_idx = profile.get(INTERNAL_COLUMN_KEY)
-        is_data = col_idx in DATA_TYPE_COLUMNS if col_idx is not None else False
+        is_data = False
+        if DATA_TYPE_COLUMNS and col_idx is not None:
+            is_data = col_idx in DATA_TYPE_COLUMNS
+        is_data = is_data or bool(profile.get(ROW4_DATA_KEY)) or bool(profile.get(ROW5_DATA_KEY))
         if profile.get(ROW5_DATA_KEY):
             is_data = True
         classes: List[str] = ["skos:Concept"]
