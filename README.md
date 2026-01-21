@@ -1,6 +1,6 @@
 # synbiont
 
-**Synbiont is the semantic layer for Synapse.** It provides a shared, evolving ontology that describes standard data management on Synapse -- how data is best organized, governed, and related -- that can be consumed directly by applications, AI agents, and workflows that interact with Synapse repository services. Ideally, the synbiont ontology facilitates mutualism between those applications/AI agents/workflows and Synapse: the first group is able to make use of Synapse services efficiently and with a better user experience, while the Synapse repository gains more data and also benefits from correct, efficent usage.   
+**Synbiont is the semantic layer for Synapse.** It provides a shared, evolving ontology that describes standard data management on Synapse -- how data is best organized, governed, and related -- that can be consumed directly by applications, AI agents, and workflows that interact with Synapse repository services. Ideally, the synbiont ontology facilitates mutualism between applications/AI agents/workflows and Synapse: these clients are able to make use of Synapse services efficiently and with a better user experience, while the Synapse repository gains more data and also benefits from more correct, efficent usage.   
 
 ## Ontology Details
 
