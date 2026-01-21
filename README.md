@@ -28,7 +28,7 @@ In addition to the ontology product itself, this repo contains example applicati
 
 1. Which data processing platforms are integrated with Synapse, which data types can be processed through each of them
 
-## Example applications
+## Example applications (WIP)
 
 ### "Smart" Todo MVP
 
