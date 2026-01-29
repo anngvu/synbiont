@@ -20,15 +20,15 @@ PROPERTY_ORDER = [
     ("Capabilities", "sagegov:capabilities"),
     ("Examples", "sagegov:example"),
     ("Downloadable data", "sagegov:downloadable"),
-    ("Redistribution", "sagegov:redistribution"),
-    ("Affiliation Requirement", "sagegov:affiliationRequirement"),
-    ("Synapse Account", "sagegov:synapseAccountRequirement"),
-    ("Human Subjects Training", "sagegov:humanSubjectsTraining"),
-    ("Data Access Request", "sagegov:dataAccessRequest"),
-    ("Data Use Certificate Signed by Signing Official", "sagegov:dataUseCertificate"),
-    ("General description of research objectives (posted)", "sagegov:researchObjectiveRequirement"),
-    ("Proof of IRB approval", "sagegov:irbApproval"),
-    ("Technical environment security standards", "sagegov:securityRequirements"),
+    ("Redistribution", "sagegov:redistributable"),
+    ("Affiliation Requirement", "sagegov:accessPrerequisite"),
+    ("Synapse Account", "sagegov:requireSynapseAccount"),
+    ("Human Subjects Training", "sagegov:requireHumanSubjectsTraining"),
+    ("Data Access Request", "sagegov:requireDataAccessRequest"),
+    ("Data Use Certificate Signed by Signing Official", "sagegov:requireDataUseCertificate"),
+    ("General description of research objectives (posted)", "sagegov:requireResearchObjective"),
+    ("Proof of IRB approval", "sagegov:requireIrbApproval"),
+    ("Technical environment security standards", "sagegov:requireSecurity"),
     ("Approval Process", "sagegov:approvalProcess"),
 ]
 BOOLEAN_FIELDS = {
@@ -56,6 +56,7 @@ VALUE_STRINGS_TO_SKIP = {
     "** with some exceptions at data contributors discretion",
     "** with some exceptions at data contributor's discretion",
 }
+EXCEPTION_MARKER = "**"
 ACCESS_LEVEL_DEFS = {
     "AnonymousOrOpen": {
         "label": "Anonymous / Open",
@@ -65,7 +66,7 @@ ACCESS_LEVEL_DEFS = {
         "label": "Registered",
         "comment": "Data usage requires a Synapse account but not additional governance approvals.",
     },
-    "RestrictedLimited": {
+    "RestrictedOrLimited": {
         "label": "Restricted / Limited",
         "comment": "Data usage limited by contributor-defined contract terms.",
     },
@@ -100,7 +101,68 @@ IDENTIFIABILITY_RISK_LOOKUP = {
     re.sub(r"[^a-z0-9]+", "", meta["label"].lower()): term
     for term, meta in IDENTIFIABILITY_RISK_DEFS.items()
 }
-RESERVED_IDENTIFIERS = set(ACCESS_LEVEL_DEFS.keys()) | set(IDENTIFIABILITY_RISK_DEFS.keys())
+SECURITY_STANDARD_DEFS = {
+    "NoSecurityStandard": {
+        "label": "No security standard required",
+        "comment": "No specific technical environment requirements declared.",
+    },
+    "NIST800171": {
+        "label": "NIST 800-171",
+        "comment": "Environment aligned with NIST Special Publication 800-171.",
+    },
+    "ISO27001": {
+        "label": "ISO 27001",
+        "comment": "Environment aligned with the ISO/IEC 27001 information security standard.",
+    },
+    "SecureCompliantEnclave": {
+        "label": "Secure compliant enclave",
+        "comment": "Data must remain inside a secured enclave that satisfies contributor requirements.",
+    },
+}
+SECURITY_STANDARD_KEYWORDS = {
+    "NoSecurityStandard": [["no"]],
+    "NIST800171": [["nist", "800", "171"]],
+    "ISO27001": [["iso", "27001"]],
+    "SecureCompliantEnclave": [["secure", "enclave"]],
+}
+PROPERTY_DECLARATIONS = {
+    "sagegov:hasCapability": {
+        "label": "has capability",
+        "comment": "Generic capability fact derived from the governance reference table.",
+    },
+    "sagegov:hasAccessPrerequisite": {
+        "label": "has access prerequisite",
+        "comment": "Prerequisite requirement that must be satisfied before access is granted.",
+    },
+    "sagegov:allowsException": {
+        "label": "allows exception",
+        "comment": "Marks requirements that support limited contributor exceptions.",
+    },
+    "sagegov:approvalProcess": {
+        "label": "approval process",
+        "comment": "Describes how data access requests are reviewed.",
+    },
+    "sagegov:requireSynapseAccount": {
+        "label": "require Synapse account",
+        "comment": "Indicates whether requestors must hold an active Synapse account.",
+    },
+    "sagegov:recommendedAccessLevel": {
+        "label": "recommended access level",
+        "comment": "Heuristic access tier recommended by governance reasoning.",
+    },
+}
+SUBPROPERTY_MAP = {
+    "sagegov:humanSubjectsTraining": "sagegov:hasAccessPrerequisite",
+    "sagegov:dataAccessRequest": "sagegov:hasAccessPrerequisite",
+    "sagegov:dataUseCertificate": "sagegov:hasAccessPrerequisite",
+    "sagegov:researchObjectiveRequirement": "sagegov:hasAccessPrerequisite",
+    "sagegov:irbApproval": "sagegov:hasAccessPrerequisite",
+    "sagegov:securityRequirements": "sagegov:hasAccessPrerequisite",
+}
+MANUAL_SUBPROPERTY_ASSERTIONS = {
+    "sagegov:requireSynapseAccount": "sagegov:hasAccessPrerequisite",
+}
+RESERVED_IDENTIFIERS = set(ACCESS_LEVEL_DEFS.keys()) | set(IDENTIFIABILITY_RISK_DEFS.keys()) | set(SECURITY_STANDARD_DEFS.keys())
 SOURCE_NOTE = "reference/DataTypes-brief-Sept2025.xlsx"
 PREFIX_BLOCK = """@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -110,30 +172,52 @@ PREFIX_BLOCK = """@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix sagegov: <https://synapse.org/synbiont/governance/> .
 """
 CLASS_BLOCK = """
-sagegov:AccessProfile a owl:Class ;
+sagegov:AccessProfile rdf:type owl:Class ;
   rdfs:label "Sage governance access profile" ;
   rdfs:comment "Profiles derived from the Sage governance reference spreadsheet." .
 
-sagegov:Data a owl:Class ;
+sagegov:Data rdf:type owl:Class ;
   rdfs:label "Sage data type" ;
-  rdfs:comment "Data classifications referenced in governance policies." .
+  rdfs:comment "Data classifications referenced in governance policies." ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/IAO_0000027> .
 
-sagegov:AccessLevel a owl:Class ;
+sagegov:AccessLevel rdf:type owl:Class ;
   rdfs:label "Access level" ;
   rdfs:comment "Permitted usage tiers for Synapse data." .
 
-sagegov:IdentifiabilityRisk a owl:Class ;
+sagegov:SecurityStandard rdf:type owl:Class ;
+  rdfs:label "Security standard" ;
+  rdfs:comment "Required technical environment controls for handling data." .
+
+sagegov:AccessProcess
+  rdfs:label "Access process" ;
+  rdfs:comment "Named procedures used to approve or deny data access." .
+
+sagegov:DataAccessCommitteeApproval rdfs:subClassOf sagegov:AccessProcess ;
+  rdfs:label "Data Access Committee approval" ;
+  rdfs:comment "Approval performed manually by the Sage Data Access Committee." .
+
+sagegov:SynapseAccountCheck rdfs:subClassOf sagegov:AccessProcess ;
+  rdfs:label "Synapse account check" ;
+  rdfs:comment "Approval step that only validates the requester has an active Synapse account." .
+
+sagegov:AutomatedClickwrap rdfs:subClassOf sagegov:AccessProcess ;
+  rdfs:label "Automated clickwrap" ;
+  rdfs:comment "Automatic approval that relies on a click-through agreement." .
+
+sagegov:IdentifiabilityRisk rdf:type owl:Class ;
   rdfs:label "Identifiability risk" ;
   rdfs:comment "Relative likelihood that data could be used to re-identify individuals." .
 
-sagegov:AccessProfileRule a owl:Class ;
+sagegov:AccessProfileRule rdf:type owl:Class ;
   rdfs:label "Governance rule" ;
   rdfs:comment "Helper class for constraints referenced inside the governance module." ;
   rdfs:isDefinedBy sagegov:AccessProfile ."""
 
 
 def camel_case_identifier(value: str, seen: Dict[str, int]) -> str:
-    parts = [p for p in re.split(r"[^0-9A-Za-z]+", value.strip()) if p]
+    safe_value = value.replace("/", " Or ")
+    parts = [p for p in re.split(r"[^0-9A-Za-z]+", safe_value.strip()) if p]
     if not parts:
         base = "Profile"
     else:
@@ -199,14 +283,18 @@ def access_level_term(value: str) -> Optional[str]:
 
 
 def access_level_defs_block() -> str:
-    pieces: List[str] = []
+    blocks: List[str] = []
     for term, meta in ACCESS_LEVEL_DEFS.items():
-        pieces.append(f"sagegov:{term} a skos:Concept, sagegov:AccessLevel ;")
-        pieces.append(f"  skos:prefLabel {literal(meta['label'])} ;")
+        lines = [
+            f"sagegov:{term}",
+            f"  rdfs:subClassOf sagegov:AccessLevel ;",
+            f"  skos:prefLabel {literal(meta['label'])} ;",
+        ]
         if meta.get("comment"):
-            pieces.append(f"  rdfs:comment {literal(meta['comment'])} ;")
-        pieces[-1] = pieces[-1].rstrip(" ;") + " .\n"
-    return "".join(pieces)
+            lines.append(f"  rdfs:comment {literal(meta['comment'])} ;")
+        lines[-1] = lines[-1].rstrip(" ;") + " ."
+        blocks.append("\n".join(lines))
+    return "\n\n".join(blocks)
 
 
 def identifiability_risk_term(value: str) -> Optional[str]:
@@ -215,14 +303,69 @@ def identifiability_risk_term(value: str) -> Optional[str]:
 
 
 def identifiability_risk_defs_block() -> str:
-    pieces: List[str] = []
+    blocks: List[str] = []
     for term, meta in IDENTIFIABILITY_RISK_DEFS.items():
-        pieces.append(f"sagegov:{term} a skos:Concept, sagegov:IdentifiabilityRisk ;")
-        pieces.append(f"  skos:prefLabel {literal(meta['label'])} ;")
+        lines = [
+            f"sagegov:{term}",
+            f"  rdfs:subClassOf sagegov:IdentifiabilityRisk ;",
+            f"  skos:prefLabel {literal(meta['label'])} ;",
+        ]
         if meta.get("comment"):
-            pieces.append(f"  rdfs:comment {literal(meta['comment'])} ;")
-        pieces[-1] = pieces[-1].rstrip(" ;") + " .\n"
-    return "".join(pieces)
+            lines.append(f"  rdfs:comment {literal(meta['comment'])} ;")
+        lines[-1] = lines[-1].rstrip(" ;") + " ."
+        blocks.append("\n".join(lines))
+    return "\n\n".join(blocks)
+
+
+def security_standard_terms(value: str) -> List[str]:
+    text = normalize_text(value).lower().replace("/", " ")
+    matches: List[str] = []
+    for term, patterns in SECURITY_STANDARD_KEYWORDS.items():
+        for tokens in patterns:
+            if all(token in text for token in tokens):
+                matches.append(term)
+                break
+    return matches
+
+
+def security_standard_defs_block() -> str:
+    blocks: List[str] = []
+    for term, meta in SECURITY_STANDARD_DEFS.items():
+        lines = [
+            f"sagegov:{term} rdf:type sagegov:SecurityStandard ;",
+            f"  skos:prefLabel {literal(meta['label'])} ;",
+        ]
+        if meta.get("comment"):
+            lines.append(f"  rdfs:comment {literal(meta['comment'])} ;")
+        lines[-1] = lines[-1].rstrip(" ;") + " ."
+        blocks.append("\n".join(lines))
+    return "\n\n".join(blocks)
+
+
+def property_axioms_block() -> str:
+    blocks: List[str] = []
+    for iri, meta in PROPERTY_DECLARATIONS.items():
+        lines = [
+            f"{iri} rdf:type rdf:Property ;",
+            f"  rdfs:label {literal(meta['label'])} ;",
+        ]
+        comment = meta.get("comment")
+        if comment:
+            lines.append(f"  rdfs:comment {literal(comment)} ;")
+        lines[-1] = lines[-1].rstrip(" ;") + " ."
+        blocks.append("\n".join(lines))
+    for child, parent in SUBPROPERTY_MAP.items():
+        local_name = child.split(":", 1)[1]
+        require_child = f"sagegov:require{local_name[0].upper()}{local_name[1:]}"
+        lines = [
+            f"{require_child} rdf:type rdf:Property ;",
+            f"  rdfs:subPropertyOf {parent} ;",
+            f"  owl:equivalentProperty {child} .",
+        ]
+        blocks.append("\n".join(lines))
+    for child, parent in MANUAL_SUBPROPERTY_ASSERTIONS.items():
+        blocks.append(f"{child} rdfs:subPropertyOf {parent} .")
+    return "\n\n".join(blocks)
 
 
 def collect_profiles(df) -> List[Dict[str, List[str]]]:
@@ -269,6 +412,8 @@ def build_turtle(profiles: List[Dict[str, List[str]]]) -> str:
         CLASS_BLOCK.strip(),
         access_level_defs_block().strip(),
         identifiability_risk_defs_block().strip(),
+        security_standard_defs_block().strip(),
+        property_axioms_block().strip(),
         "",
     ]
     lines = [block for block in header_blocks if block]
@@ -291,22 +436,24 @@ def build_turtle(profiles: List[Dict[str, List[str]]]) -> str:
         is_data = is_data or bool(profile.get(ROW4_DATA_KEY)) or bool(profile.get(ROW5_DATA_KEY))
         if profile.get(ROW5_DATA_KEY):
             is_data = True
-        classes: List[str] = ["skos:Concept"]
-        if is_data:
-            classes.append("sagegov:Data")
-        else:
+        classes: List[str] = []
+        access_profile_flag = not is_data
+        label_norm = normalize_label_text(pref_label).lower()
+        if label_norm in ALSO_DATA_LABELS:
+            is_data = True
+            access_profile_flag = False
+        if access_profile_flag:
             classes.append("sagegov:AccessProfile")
-        if normalize_label_text(pref_label).lower() in ALSO_DATA_LABELS:
-            if "sagegov:Data" not in classes:
-                classes.append("sagegov:Data")
-            if "sagegov:AccessProfile" not in classes:
-                classes.append("sagegov:AccessProfile")
-        entry_lines = [
-            f"sagegov:{node_id} a {', '.join(classes)} ;",
-            f"  skos:prefLabel {literal(pref_label)} ;",
-        ]
+        entry_lines = []
+        if classes:
+            entry_lines.append(f"sagegov:{node_id} rdf:type {', '.join(classes)} ;")
+        else:
+            entry_lines.append(f"sagegov:{node_id}")
+        entry_lines.append(f"  skos:prefLabel {literal(pref_label)} ;")
         for alt in alt_labels:
             entry_lines.append(f"  skos:altLabel {literal(alt)} ;")
+        if is_data:
+            entry_lines.append("  rdfs:subClassOf sagegov:Data ;")
         wrote_access_level = False
         for label, predicate in PROPERTY_ORDER:
             values = profile.get(label, [])
@@ -340,8 +487,37 @@ def build_turtle(profiles: List[Dict[str, List[str]]]) -> str:
                     else:
                         entry_lines.append(f"  {predicate} {literal(value)} ;")
                 continue
+            if label == "Technical environment security standards":
+                for value in values:
+                    terms = security_standard_terms(value)
+                    if terms:
+                        for term in terms:
+                            entry_lines.append(f"  {predicate} sagegov:{term} ;")
+                    else:
+                        entry_lines.append(f"  {predicate} {literal(value)} ;")
+                continue
+            if label == "Approval Process":
+                for value in values:
+                    normalized = normalize_text(value)
+                    lowered = normalized.lower()
+                    if lowered == "no":
+                        continue
+                    if "dac" in lowered:
+                        entry_lines.append(f"  {predicate} sagegov:DataAccessCommittee ;")
+                        continue
+                    if "automated" in lowered and "clickwrap" in lowered:
+                        entry_lines.append(f"  {predicate} sagegov:AutomatedClickwrap ;")
+                        continue
+                    if "synapse" in lowered and "account" in lowered:
+                        entry_lines.append(f"  {predicate} sagegov:SynapseAccountCheck ;")
+                        continue
+                    entry_lines.append(f"  {predicate} {literal(normalized)} ;")
+                continue
             for value in values:
+                exception_flag = value.endswith(EXCEPTION_MARKER)
                 entry_lines.append(f"  {predicate} {format_value(label, value)} ;")
+                if exception_flag:
+                    entry_lines.append("  sagegov:allowsException true ;")
         if is_data and not wrote_access_level:
             entry_lines.append(f"  sagegov:accessLevel sagegov:AnonymousOrOpen ;")
         entry_lines.append(f"  dct:source {literal(SOURCE_NOTE)} .")
