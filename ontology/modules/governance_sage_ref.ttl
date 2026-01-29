@@ -42,11 +42,6 @@ sagegov:IdentifiabilityRisk rdf:type owl:Class ;
   rdfs:label "Identifiability risk" ;
   rdfs:comment "Relative likelihood that data could be used to re-identify individuals." .
 
-sagegov:AccessProfileRule rdf:type owl:Class ;
-  rdfs:label "Governance rule" ;
-  rdfs:comment "Helper class for constraints referenced inside the governance module." ;
-  rdfs:isDefinedBy sagegov:AccessProfile .
-
 sagegov:AnonymousOrOpen
   rdfs:subClassOf sagegov:AccessLevel ;
   skos:prefLabel "Anonymous / Open" ;
