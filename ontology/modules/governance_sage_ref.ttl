@@ -1,0 +1,367 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix sagegov: <https://synapse.org/synbiont/governance/> .
+
+sagegov:AccessProfile rdf:type owl:Class ;
+  rdfs:label "Sage governance access profile" ;
+  rdfs:comment "Profiles derived from the Sage governance reference spreadsheet." .
+
+sagegov:Data rdf:type owl:Class ;
+  rdfs:label "Sage data type" ;
+  rdfs:comment "Data classifications referenced in governance policies." ;
+  rdfs:subClassOf <http://purl.obolibrary.org/obo/IAO_0000027> .
+
+sagegov:AccessLevel rdf:type owl:Class ;
+  rdfs:label "Access level" ;
+  rdfs:comment "Permitted usage tiers for Synapse data." .
+
+sagegov:SecurityStandard rdf:type owl:Class ;
+  rdfs:label "Security standard" ;
+  rdfs:comment "Required technical environment controls for handling data." .
+
+sagegov:AccessProcess
+  rdfs:label "Access process" ;
+  rdfs:comment "Named procedures used to approve or deny data access." .
+
+sagegov:DataAccessCommitteeApproval rdfs:subClassOf sagegov:AccessProcess ;
+  rdfs:label "Data Access Committee approval" ;
+  rdfs:comment "Approval performed manually by the Sage Data Access Committee." .
+
+sagegov:SynapseAccountCheck rdfs:subClassOf sagegov:AccessProcess ;
+  rdfs:label "Synapse account check" ;
+  rdfs:comment "Approval step that only validates the requester has an active Synapse account." .
+
+sagegov:AutomatedClickwrap rdfs:subClassOf sagegov:AccessProcess ;
+  rdfs:label "Automated clickwrap" ;
+  rdfs:comment "Automatic approval that relies on a click-through agreement." .
+
+sagegov:IdentifiabilityRisk rdf:type owl:Class ;
+  rdfs:label "Identifiability risk" ;
+  rdfs:comment "Relative likelihood that data could be used to re-identify individuals." .
+
+sagegov:AnonymousOrOpen
+  rdfs:subClassOf sagegov:AccessLevel ;
+  skos:prefLabel "Anonymous / Open" ;
+  rdfs:comment "Data is usable without registration or affiliation." .
+
+sagegov:Registered
+  rdfs:subClassOf sagegov:AccessLevel ;
+  skos:prefLabel "Registered" ;
+  rdfs:comment "Data usage requires a Synapse account but not additional governance approvals." .
+
+sagegov:RestrictedOrLimited
+  rdfs:subClassOf sagegov:AccessLevel ;
+  skos:prefLabel "Restricted / Limited" ;
+  rdfs:comment "Data usage limited by contributor-defined contract terms." .
+
+sagegov:Controlled
+  rdfs:subClassOf sagegov:AccessLevel ;
+  skos:prefLabel "Controlled" ;
+  rdfs:comment "Data potentially re-identifiable and subject to access review." .
+
+sagegov:Enclave
+  rdfs:subClassOf sagegov:AccessLevel ;
+  skos:prefLabel "Enclave" ;
+  rdfs:comment "Sensitive data that must remain inside a secure compute enclave." .
+
+sagegov:LowIdentifiabilityRisk
+  rdfs:subClassOf sagegov:IdentifiabilityRisk ;
+  skos:prefLabel "Low" ;
+  rdfs:comment "Data has low likelihood of re-identification." .
+
+sagegov:SomeIdentifiabilityRisk
+  rdfs:subClassOf sagegov:IdentifiabilityRisk ;
+  skos:prefLabel "Some risks" ;
+  rdfs:comment "Data could, in certain contexts, be used to re-identify individuals." .
+
+sagegov:HighIdentifiabilityRisk
+  rdfs:subClassOf sagegov:IdentifiabilityRisk ;
+  skos:prefLabel "High" ;
+  rdfs:comment "Data is likely to re-identify individuals if misused." .
+
+sagegov:NoSecurityStandard rdf:type sagegov:SecurityStandard ;
+  skos:prefLabel "No security standard required" ;
+  rdfs:comment "No specific technical environment requirements declared." .
+
+sagegov:NIST800171 rdf:type sagegov:SecurityStandard ;
+  skos:prefLabel "NIST 800-171" ;
+  rdfs:comment "Environment aligned with NIST Special Publication 800-171." .
+
+sagegov:ISO27001 rdf:type sagegov:SecurityStandard ;
+  skos:prefLabel "ISO 27001" ;
+  rdfs:comment "Environment aligned with the ISO/IEC 27001 information security standard." .
+
+sagegov:SecureCompliantEnclave rdf:type sagegov:SecurityStandard ;
+  skos:prefLabel "Secure compliant enclave" ;
+  rdfs:comment "Data must remain inside a secured enclave that satisfies contributor requirements." .
+
+sagegov:hasCapability rdf:type rdf:Property ;
+  rdfs:label "has capability" ;
+  rdfs:comment "Generic capability fact derived from the governance reference table." .
+
+sagegov:hasAccessPrerequisite rdf:type rdf:Property ;
+  rdfs:label "has access prerequisite" ;
+  rdfs:comment "Prerequisite requirement that must be satisfied before access is granted." .
+
+sagegov:allowsException rdf:type rdf:Property ;
+  rdfs:label "allows exception" ;
+  rdfs:comment "Marks requirements that support limited contributor exceptions." .
+
+sagegov:hasApprovalProcess rdf:type rdf:Property ;
+  rdfs:label "approval process" ;
+  rdfs:comment "Describes how data access requests are reviewed." .
+
+sagegov:requireSynapseAccount rdf:type rdf:Property ;
+  rdfs:label "require Synapse account" ;
+  rdfs:comment "Indicates whether requestors must hold an active Synapse account." .
+
+sagegov:recommendedAccessLevel rdf:type rdf:Property ;
+  rdfs:label "recommended access level" ;
+  rdfs:comment "Heuristic access tier recommended by governance reasoning." .
+
+sagegov:requireHumanSubjectsTraining rdf:type rdf:Property ;
+  rdfs:subPropertyOf sagegov:hasAccessPrerequisite ;
+  owl:equivalentProperty sagegov:humanSubjectsTraining .
+
+sagegov:requireDataAccessRequest rdf:type rdf:Property ;
+  rdfs:subPropertyOf sagegov:hasAccessPrerequisite ;
+  owl:equivalentProperty sagegov:dataAccessRequest .
+
+sagegov:requireDataUseCertificate rdf:type rdf:Property ;
+  rdfs:subPropertyOf sagegov:hasAccessPrerequisite ;
+  owl:equivalentProperty sagegov:dataUseCertificate .
+
+sagegov:requireResearchObjectiveRequirement rdf:type rdf:Property ;
+  rdfs:subPropertyOf sagegov:hasAccessPrerequisite ;
+  owl:equivalentProperty sagegov:researchObjectiveRequirement .
+
+sagegov:requireIrbApproval rdf:type rdf:Property ;
+  rdfs:subPropertyOf sagegov:hasAccessPrerequisite ;
+  owl:equivalentProperty sagegov:irbApproval .
+
+sagegov:requireSecurityRequirements rdf:type rdf:Property ;
+  rdfs:subPropertyOf sagegov:hasAccessPrerequisite ;
+  owl:equivalentProperty sagegov:securityRequirements .
+
+sagegov:requireSynapseAccount rdfs:subPropertyOf sagegov:hasAccessPrerequisite .
+
+sagegov:SyntheticData
+  skos:prefLabel "Synthetic Data" ;
+  rdfs:subClassOf sagegov:Data ;
+  sagegov:accessLevel sagegov:AnonymousOrOpen ;
+  sagegov:accessLevelNote "Data that cannot be used alone or with other data to identify a unique individiual" ;
+  dct:description "Computational data derivative that statistically resembles the original data" ;
+  sagegov:example "1. Aggregate/summary-level data\n2. Genomic Summary Results\n - Networks\n - Differential expression\n - eQTL analysis\n - GWAS catalog\n3. Minimal unidentifiable individual-level information\nDe-identified ID\n - Age (90+ censored) and Sex\n - Diagnosis (limited, common)\n4. Study & file annotation\n5. Non-human data\n6. Synthetic or anonymized data \n7. Synapse users public profile \n8. Public Wikis and dashboards\n9. Intended data use statements" ;
+  sagegov:downloadable true ;
+  sagegov:redistributable true ;
+  sagegov:accessPrerequisite false ;
+  sagegov:requireSynapseAccount false ;
+  sagegov:requireHumanSubjectsTraining false ;
+  sagegov:requireDataAccessRequest false ;
+  sagegov:requireDataUseCertificate false ;
+  sagegov:requireResearchObjective false ;
+  sagegov:requireIrbApproval false ;
+  sagegov:requireSecurity sagegov:NoSecurityStandard ;
+  dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
+
+sagegov:AnonymizedData
+  skos:prefLabel "Anonymized Data" ;
+  rdfs:subClassOf sagegov:Data ;
+  dct:description "Data that cannot be associated to a unique individiual" ;
+  sagegov:downloadable true ;
+  sagegov:redistributable true ;
+  sagegov:accessPrerequisite false ;
+  sagegov:requireSynapseAccount false ;
+  sagegov:requireHumanSubjectsTraining false ;
+  sagegov:requireDataAccessRequest false ;
+  sagegov:requireDataUseCertificate false ;
+  sagegov:requireResearchObjective false ;
+  sagegov:requireIrbApproval false ;
+  sagegov:requireSecurity sagegov:NoSecurityStandard ;
+  sagegov:accessLevel sagegov:AnonymousOrOpen ;
+  dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
+
+sagegov:HIPAASafeHarborData
+  skos:prefLabel "HIPAA Safe Harbor Data" ;
+  rdfs:subClassOf sagegov:Data ;
+  sagegov:identifiabilityRisk sagegov:LowIdentifiabilityRisk ;
+  sagegov:accessLevel sagegov:Registered ;
+  sagegov:accessLevelNote "De-identified data that cannot be readily used to identify a unique individual and poses minimal risk of harm if misused" ;
+  dct:description "Data stripped of 18 direct identifiers per HIPAA rules" ;
+  sagegov:example "1. Individual data/metadata*\n -  Data/specimen source\n -  Age of onset, death, at visits (90+ censored)\n -  Test summary scores\n -  Post-mortem intervals\n -  Normalized values\n2. Individual summary data\n -  Gene expression counts \n -  Peak calls, loop calls, HiC interaction matrix\n3. Proteomics (processed)\n4. Metabolomics\n5. Probe-based gene expression microarrays\n6. Imaging (processed)\n7. Tumor / somatic-only data (tumor-normal pair)" ;
+  sagegov:downloadable true ;
+  sagegov:redistributable true ;
+  sagegov:accessPrerequisite false ;
+  sagegov:requireSynapseAccount true ;
+  sagegov:requireHumanSubjectsTraining true ;
+  sagegov:requireDataAccessRequest false ;
+  sagegov:requireDataUseCertificate false ;
+  sagegov:requireResearchObjective false ;
+  sagegov:requireIrbApproval false ;
+  sagegov:requireSecurity sagegov:NoSecurityStandard ;
+  sagegov:hasApprovalProcess sagegov:SynapseAccountCheck ;
+  dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
+
+sagegov:HIPAAExpertDeIdentifiedData
+  skos:prefLabel "HIPAA Expert de-identified Data" ;
+  rdfs:subClassOf sagegov:Data ;
+  dct:description "Data that an expert in statistical and scientific method has determined presents a very small risk to be used to identify an invididual" ;
+  sagegov:downloadable true ;
+  sagegov:redistributable true ;
+  sagegov:accessPrerequisite false ;
+  sagegov:requireSynapseAccount true ;
+  sagegov:requireHumanSubjectsTraining true ;
+  sagegov:requireDataAccessRequest false ;
+  sagegov:requireDataUseCertificate false ;
+  sagegov:requireResearchObjective false ;
+  sagegov:requireIrbApproval false ;
+  sagegov:requireSecurity sagegov:NoSecurityStandard ;
+  sagegov:hasApprovalProcess sagegov:SynapseAccountCheck ;
+  sagegov:accessLevel sagegov:AnonymousOrOpen ;
+  dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
+
+sagegov:PseudonymizedGDPRData
+  skos:prefLabel "Pseudonymized (GDPR) Data" ;
+  rdfs:subClassOf sagegov:Data ;
+  dct:description "Data where individual identifiers have been replaced by a code or pseudo (false) identifier" ;
+  sagegov:downloadable true ;
+  sagegov:redistributable true ;
+  sagegov:accessPrerequisite false ;
+  sagegov:requireSynapseAccount true ;
+  sagegov:requireHumanSubjectsTraining true ;
+  sagegov:requireDataAccessRequest false ;
+  sagegov:requireDataUseCertificate false ;
+  sagegov:requireResearchObjective false ;
+  sagegov:requireIrbApproval false ;
+  sagegov:requireSecurity sagegov:NoSecurityStandard ;
+  sagegov:hasApprovalProcess sagegov:SynapseAccountCheck ;
+  sagegov:accessLevel sagegov:AnonymousOrOpen ;
+  dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
+
+sagegov:RestrictedOrLimitedData
+  skos:prefLabel "Restricted/ Limited Data" ;
+  rdfs:subClassOf sagegov:Data ;
+  sagegov:accessLevel sagegov:RestrictedOrLimited ;
+  sagegov:accessLevelNote "Low-risk de-identified data whose usage is limited by contractual clauses set by data contributors" ;
+  dct:description "De-identified Data whose usage is limited by contractual clause" ;
+  sagegov:example "Data whose usage is limited based on:\n\n -  Area of research\n -  Non-profit use\n -  Non-commercial use\n -  Biomedical research (no ancestry)\n -  Methods development\n -  Embargo (publication/use)\n -  Return of results" ;
+  sagegov:downloadable true ;
+  sagegov:redistributable false ;
+  sagegov:accessPrerequisite "Optional" ;
+  sagegov:requireSynapseAccount true ;
+  sagegov:requireHumanSubjectsTraining true ;
+  sagegov:requireDataAccessRequest false ;
+  sagegov:requireDataUseCertificate false ;
+  sagegov:requireResearchObjective false ;
+  sagegov:requireIrbApproval false ;
+  sagegov:requireSecurity sagegov:NoSecurityStandard ;
+  sagegov:hasApprovalProcess sagegov:AutomatedClickwrap ;
+  dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
+
+sagegov:OmicsLargeScaleCodedData
+  skos:prefLabel "Omics Large scale, coded Data" ;
+  rdfs:subClassOf sagegov:Data ;
+  sagegov:identifiabilityRisk sagegov:SomeIdentifiabilityRisk ;
+  sagegov:accessLevel sagegov:Controlled ;
+  sagegov:accessLevelNote "Data that could theoretically be used to identify a unique individual and could cause more than minimal risk of harm if misused" ;
+  dct:description "includes raw genomics,  metabolomics, transcriptomics, and proteomics." ;
+  sagegov:example "1. Sequencing  (raw, individual level)\n -  WGS\n -  WES\n -  RNAseq, scRNAseq, snRNAseq\n -  CHIPseq\n -  ATACseq, snATACseq\n -  Hi-C, HiChip\n -  Next Gen sequencing  (<50 genes)\n2. Proteomics (raw)\n3. High content SNP array, raw & imputed\n4. Methylation array\n5. Whole transcriptome \n6. Genomic summary statistics from GWAS\n7. Imaging (raw)\n -  MRI, CT scan" ;
+  sagegov:downloadable true ;
+  sagegov:redistributable false ;
+  sagegov:accessPrerequisite true ;
+  sagegov:requireSynapseAccount true ;
+  sagegov:requireHumanSubjectsTraining true ;
+  sagegov:requireDataAccessRequest true ;
+  sagegov:requireDataUseCertificate true ;
+  sagegov:allowsException true ;
+  sagegov:requireResearchObjective true ;
+  sagegov:allowsException true ;
+  sagegov:requireIrbApproval false ;
+  sagegov:allowsException true ;
+  sagegov:requireSecurity sagegov:NIST800171 ;
+  sagegov:requireSecurity sagegov:ISO27001 ;
+  sagegov:hasApprovalProcess sagegov:DataAccessCommittee ;
+  dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
+
+sagegov:SensitiveDataDeIdentifiedData
+  skos:prefLabel "Sensitive Data de-identified Data" ;
+  skos:altLabel "HIPAA Limited Datasets" ;
+  rdfs:subClassOf sagegov:Data ;
+  dct:description "Data stripped of 16 direct identifiers that may contain (dates, full zip code, and any age)\n\nData relating to health or sex life, politics or religion" ;
+  sagegov:downloadable true ;
+  sagegov:redistributable false ;
+  sagegov:accessPrerequisite true ;
+  sagegov:requireSynapseAccount true ;
+  sagegov:requireHumanSubjectsTraining true ;
+  sagegov:requireDataAccessRequest true ;
+  sagegov:requireDataUseCertificate true ;
+  sagegov:requireResearchObjective true ;
+  sagegov:requireIrbApproval true ;
+  sagegov:requireSecurity sagegov:NIST800171 ;
+  sagegov:requireSecurity sagegov:ISO27001 ;
+  sagegov:hasApprovalProcess sagegov:DataAccessCommittee ;
+  sagegov:accessLevel sagegov:AnonymousOrOpen ;
+  dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
+
+sagegov:ImagesAndProcessedBiometricsDeIdentifiedData
+  skos:prefLabel "Images and processed biometrics de-identified Data" ;
+  skos:altLabel "de-identified" ;
+  rdfs:subClassOf sagegov:Data ;
+  dct:description "includes images (MRI, CT scans), voice or typing cadence obtain from technical processing" ;
+  sagegov:downloadable true ;
+  sagegov:redistributable false ;
+  sagegov:accessPrerequisite true ;
+  sagegov:requireSynapseAccount true ;
+  sagegov:requireHumanSubjectsTraining true ;
+  sagegov:requireDataAccessRequest true ;
+  sagegov:requireDataUseCertificate true ;
+  sagegov:requireResearchObjective true ;
+  sagegov:requireIrbApproval true ;
+  sagegov:requireSecurity sagegov:NIST800171 ;
+  sagegov:requireSecurity sagegov:ISO27001 ;
+  sagegov:hasApprovalProcess sagegov:DataAccessCommittee ;
+  sagegov:accessLevel sagegov:AnonymousOrOpen ;
+  dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
+
+sagegov:PersonallyIdentifiableInformation
+  skos:prefLabel "Personally identifiable Information" ;
+  rdfs:subClassOf sagegov:Data ;
+  sagegov:identifiabilityRisk sagegov:HighIdentifiabilityRisk ;
+  sagegov:accessLevel sagegov:Enclave ;
+  sagegov:accessLevelNote "sensitive data that, when combined with easily accessible public information, carries a significant risk of revealing the identity of specific individuals. Misuse of this data could potentially cause harm to those individuals or groups" ;
+  dct:description "Data that directly identifies an individual (geolocation, family pedigree)" ;
+  sagegov:example "1.  Next Gen Sequencing > 50 genes\n2.  3D imaging\n3.  Geolocation \n4.  Family pedigree\n5.  Voice recordings" ;
+  sagegov:downloadable false ;
+  sagegov:redistributable false ;
+  sagegov:accessPrerequisite true ;
+  sagegov:requireSynapseAccount true ;
+  sagegov:requireHumanSubjectsTraining true ;
+  sagegov:requireDataAccessRequest true ;
+  sagegov:requireDataUseCertificate true ;
+  sagegov:requireResearchObjective true ;
+  sagegov:requireIrbApproval true ;
+  sagegov:requireSecurity sagegov:SecureCompliantEnclave ;
+  sagegov:hasApprovalProcess sagegov:DataAccessCommittee ;
+  dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
+
+sagegov:LinkableImagesAndBiometricDeIdentifiedData
+  skos:prefLabel "Linkable images and biometric de-identified Data" ;
+  skos:altLabel "de-identified" ;
+  rdfs:subClassOf sagegov:Data ;
+  dct:description "includes facial patterns," ;
+  sagegov:downloadable false ;
+  sagegov:redistributable false ;
+  sagegov:accessPrerequisite true ;
+  sagegov:requireSynapseAccount true ;
+  sagegov:requireHumanSubjectsTraining true ;
+  sagegov:requireDataAccessRequest true ;
+  sagegov:requireDataUseCertificate true ;
+  sagegov:requireResearchObjective true ;
+  sagegov:requireIrbApproval true ;
+  sagegov:requireSecurity sagegov:SecureCompliantEnclave ;
+  sagegov:hasApprovalProcess sagegov:DataAccessCommittee ;
+  sagegov:accessLevel sagegov:AnonymousOrOpen ;
+  dct:source "reference/DataTypes-brief-Sept2025.xlsx" .

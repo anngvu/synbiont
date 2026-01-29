@@ -1,50 +1,53 @@
 # synbiont
 
-**Synbiont is the semantic layer for Synapse.** It provides a shared, evolving ontology that describes standard data management on Synapse -- how data is best organized, governed, and related -- that can be consumed directly by applications, AI agents, and workflows that interact with Synapse repository services. Ideally, the synbiont ontology facilitates mutualism between applications/AI agents/workflows and Synapse: these clients are able to make use of Synapse services efficiently and with a better user experience, while the Synapse repository gains more data and also benefits from more correct, efficent usage.   
+**Synbiont is the semantic layer for Synapse.** It provides a shared, evolving ontology that describes the [research data lifecycle](https://www.nnlm.gov/guides/data-glossary/research-lifecycle) and data governance especially in relation to Synapse. A formal model of how data is organized, governed, and related can be more readily consumed by applications, AI agents, and workflows that interact with Synapse repository services. Ideally, the synbiont ontology facilitates mutualism between applications/AI agents/workflows and Synapse: these clients are able to make use of Synapse services efficiently and with a better user experience, while the Synapse repository gains more data and also benefits from more correct, efficent usage.   
 
-## Ontology Details
+## Ontology Notes
 
-Using the OWL 2 RL profile enables scalable reasoning without sacrificing too much expressive power ([ref](https://www.w3.org/TR/owl2-profiles)). 
+The ontology is developed with the [OWL 2 RL profile](https://www.w3.org/TR/owl2-profiles/#Introduction) in mind, which enables scalable reasoning without sacrificing too much expressive power. This selection is based on application needs and the fact that many rule-based reasoning engines are available to implement OWL 2 RL reasoning systems. Here, ontology reasoning is encoded using [N3](https://w3c.github.io/N3/spec/), and [eyeling.js](https://github.com/eyereasoner/eyeling) is used for demonstration of the overall reasoning system.
 
-Coming soon: ontology visualization.
+In addition to the ontology product itself, this repo contains example web and AI agent applications to demonstrate synbiont usage ([see WIP Example applications](#example-applications-wip)). 
 
-In addition to the ontology product itself, this repo contains example applications to demonstrate synbiont usage ([see Example applications](#example-applications-wip)). 
+We build the ontology in layers: first by lifting authoritative references (OpenAPI, governance spreadsheets, external ontologies) into module files, and then by adding separate modules that impose hand-authored constraints and relationships that tie the references together. Keeping these layers distinct makes it easy to refresh imported sources without losing curated axioms. Tests ensure layers are consistent with any update (WIP).
+
+Examples of relations added in the second layer: 
+- Connecting a governance class such as "ControlledAccess" to the Synapse services that help implement it
+- Connecting governance classes to other ontologies like DUO; for example, "RestrictedorLimited" is linked to known DUO restrictions. 
+- Connecting classes to the standard upper-level OBO ontologies BFO and IAO for interoperability
+
+## Visualization
+
+TBD
 
 ## Organization
 
-- [ontology/modules](ontology/modules): Turtle (.ttl) source modules that compose the ontology.
-- [ontology/imports](ontology/imports): Vendored external ontologies (for example DUO) used during builds.
+- [ontology/modules](ontology/modules): Turtle (.ttl) or .n3 source modules that compose the ontology.
+- [ontology/imports](ontology/imports): Imported external ontologies (for example, DUO) used during builds.
 - [ontology/shacl](ontology/shacl): SHACL validation/constraint definitions aligned with the ontology.
 - [scripts](scripts): Utilities such as [ROBOT](https://robot.obolibrary.org/) workflows or ontology import helpers.
 - [doc](doc): Reference docs, bootstrapping notes, and design rationale that complement and contextualize the ontology artifacts.
 
 ### Example Use Cases
 
-1. Map Synapse Access Restrictions to the data types that must comply with each restriction.
-2. Trace which Synapse services support every stage of the data lifecycle.
+1. Map Synapse Access Restrictions (ARs) to the data types that must comply with each restriction.
+2. Trace which Synapse services support each stage of the data lifecycle.
 3. Identify the partner processing platforms available for each data type.
 
 ## Example applications (WIP)
 
-### "Smart" Todo MVP
+### "Smart" Task Dashboard
 
-example-apps/smart-todo-mvp
+example-apps/smart-dashboard
 
-The classic Todo MVP app that goes beyond to use the embedded ontology + workflow engine to: 
+A "smart" dashboard using the embedded ontology + reasoner (eyeling.js) to automate: 
 
-1. Auto-create appropriate followup governance tasks based on the properties of the first planning task.
-2. When a new plan version is created, the visualization auto-updates to visualize values using the new plan.
+- Creation of appropriate governance followup questionnaires based on planned data.
+- Classification of data into potential access level tiers.
+- Update of dataset status tracker view based on present task entities.
+- When data survey results are updated (for fields that can be updated), update or remove downstream tasks.
 
-### AI agent in A/B mode
+### A/B AI agent
 
 example-apps/ab-ai-agent
 
-This app can be started in "A" or "B" mode and features an agent to interact with. Logs of agent actions can be seen in the UI. The agent in both modes is the same (provider model, system prompt, mock tools) *except* that in "A" mode the agent also has access to the ontology, while in "B" mode the agent does not. The application can be used for blinded user testing, where experienced users can rate which agent is more competent and reliable.
-
-The "A" mode agent is expected to perform better because it can use the ontology to follow standard data management practices and/or provide grounded explanations. As well, the agent should make overall fewer false starts or incorrect calls, which reduces load on Synapse repository services.
-
-Test cases:
-
-1. When asked whether an entity can be "released", agent will first check that data type and the rules for that data type, then explain why or why or not data can be released. 
-2. Explain the rationale for the standard "Data Survey" configuration and how a change breaks something downstream.
-3. Correctly advises on which partner platform can handle processing of a data type / how to create the appropriate "Compute Task". 
+This application is meant to demonstrate the ontology's utility for AI agents, making agents more competent and reliable when helping users manage data. A user asks a question that is given to both agents "A" and "B". All things are the same (provider model, system prompt, request received) *except* that "A" has guidance from the ontology, while "B" does not. The "A" agent is expected to have better performance because it can use the ontology to follow standard/expected data management practices, provide better explanations, make overall fewer false starts/incorrect calls (access resources more efficiently).
