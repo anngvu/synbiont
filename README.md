@@ -39,7 +39,7 @@ TBD
 
 example-apps/smart-dashboard
 
-What would normally be a Todo MVP app becomes a "smart" dashboard using the embedded ontology + reasoner (eyeling.js) to automate: 
+A "smart" dashboard using the embedded ontology + reasoner (eyeling.js) to automate: 
 
 - Creation of appropriate governance followup questionnaires based on planned data.
 - Classification of data into potential access level tiers.
