@@ -52,7 +52,7 @@ sagegov:RequiresSynapseAccount a owl:Class ;
   ] ;
   rdfs:subClassOf [
     a owl:Restriction ;
-    owl:onProperty sagegov:approvalProcess ;
+    owl:onProperty sagegov:hasApprovalProcess ;
     owl:hasValue sagegov:SynapseAccountCheck
   ] .
 

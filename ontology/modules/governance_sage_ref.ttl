@@ -115,7 +115,7 @@ sagegov:allowsException rdf:type rdf:Property ;
   rdfs:label "allows exception" ;
   rdfs:comment "Marks requirements that support limited contributor exceptions." .
 
-sagegov:approvalProcess rdf:type rdf:Property ;
+sagegov:hasApprovalProcess rdf:type rdf:Property ;
   rdfs:label "approval process" ;
   rdfs:comment "Describes how data access requests are reviewed." .
 
@@ -207,7 +207,7 @@ sagegov:HIPAASafeHarbor
   sagegov:requireResearchObjective false ;
   sagegov:requireIrbApproval false ;
   sagegov:requireSecurity sagegov:NoSecurityStandard ;
-  sagegov:approvalProcess sagegov:SynapseAccountCheck ;
+  sagegov:hasApprovalProcess sagegov:SynapseAccountCheck ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
 sagegov:HIPAAExpertDeIdentified
@@ -224,7 +224,7 @@ sagegov:HIPAAExpertDeIdentified
   sagegov:requireResearchObjective false ;
   sagegov:requireIrbApproval false ;
   sagegov:requireSecurity sagegov:NoSecurityStandard ;
-  sagegov:approvalProcess sagegov:SynapseAccountCheck ;
+  sagegov:hasApprovalProcess sagegov:SynapseAccountCheck ;
   sagegov:accessLevel sagegov:AnonymousOrOpen ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
@@ -242,7 +242,7 @@ sagegov:PseudonymizedGDPR
   sagegov:requireResearchObjective false ;
   sagegov:requireIrbApproval false ;
   sagegov:requireSecurity sagegov:NoSecurityStandard ;
-  sagegov:approvalProcess sagegov:SynapseAccountCheck ;
+  sagegov:hasApprovalProcess sagegov:SynapseAccountCheck ;
   sagegov:accessLevel sagegov:AnonymousOrOpen ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
@@ -262,7 +262,7 @@ sagegov:RestrictedOrLimitedProfile rdf:type sagegov:AccessProfile ;
   sagegov:requireResearchObjective false ;
   sagegov:requireIrbApproval false ;
   sagegov:requireSecurity sagegov:NoSecurityStandard ;
-  sagegov:approvalProcess sagegov:AutomatedClickwrap ;
+  sagegov:hasApprovalProcess sagegov:AutomatedClickwrap ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
 sagegov:OmicsLargeScaleCoded
@@ -287,7 +287,7 @@ sagegov:OmicsLargeScaleCoded
   sagegov:allowsException true ;
   sagegov:requireSecurity sagegov:NIST800171 ;
   sagegov:requireSecurity sagegov:ISO27001 ;
-  sagegov:approvalProcess sagegov:DataAccessCommittee ;
+  sagegov:hasApprovalProcess sagegov:DataAccessCommittee ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
 sagegov:SensitiveDataDeIdentified
@@ -306,7 +306,7 @@ sagegov:SensitiveDataDeIdentified
   sagegov:requireIrbApproval true ;
   sagegov:requireSecurity sagegov:NIST800171 ;
   sagegov:requireSecurity sagegov:ISO27001 ;
-  sagegov:approvalProcess sagegov:DataAccessCommittee ;
+  sagegov:hasApprovalProcess sagegov:DataAccessCommittee ;
   sagegov:accessLevel sagegov:AnonymousOrOpen ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
@@ -326,7 +326,7 @@ sagegov:ImagesAndProcessedBiometricsData
   sagegov:requireIrbApproval true ;
   sagegov:requireSecurity sagegov:NIST800171 ;
   sagegov:requireSecurity sagegov:ISO27001 ;
-  sagegov:approvalProcess sagegov:DataAccessCommittee ;
+  sagegov:hasApprovalProcess sagegov:DataAccessCommittee ;
   sagegov:accessLevel sagegov:AnonymousOrOpen ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
@@ -348,7 +348,7 @@ sagegov:PersonallyIdentifiableInformation
   sagegov:requireResearchObjective true ;
   sagegov:requireIrbApproval true ;
   sagegov:requireSecurity sagegov:SecureCompliantEnclave ;
-  sagegov:approvalProcess sagegov:DataAccessCommittee ;
+  sagegov:hasApprovalProcess sagegov:DataAccessCommittee ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
 sagegov:LinkableImagesAndBiometricData
@@ -366,6 +366,6 @@ sagegov:LinkableImagesAndBiometricData
   sagegov:requireResearchObjective true ;
   sagegov:requireIrbApproval true ;
   sagegov:requireSecurity sagegov:SecureCompliantEnclave ;
-  sagegov:approvalProcess sagegov:DataAccessCommittee ;
+  sagegov:hasApprovalProcess sagegov:DataAccessCommittee ;
   sagegov:accessLevel sagegov:AnonymousOrOpen ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .

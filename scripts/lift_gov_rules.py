@@ -29,7 +29,7 @@ PROPERTY_ORDER = [
     ("General description of research objectives (posted)", "sagegov:requireResearchObjective"),
     ("Proof of IRB approval", "sagegov:requireIrbApproval"),
     ("Technical environment security standards", "sagegov:requireSecurity"),
-    ("Approval Process", "sagegov:approvalProcess"),
+    ("Approval Process", "sagegov:hasApprovalProcess"),
 ]
 BOOLEAN_FIELDS = {
     "Downloadable data",
@@ -138,7 +138,7 @@ PROPERTY_DECLARATIONS = {
         "label": "allows exception",
         "comment": "Marks requirements that support limited contributor exceptions.",
     },
-    "sagegov:approvalProcess": {
+    "sagegov:hasApprovalProcess": {
         "label": "approval process",
         "comment": "Describes how data access requests are reviewed.",
     },
