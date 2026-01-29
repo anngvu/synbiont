@@ -7,7 +7,6 @@
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix sagegov: <https://synapse.org/synbiont/governance/> .
 
-# Governance-specific structural axioms
 
 sagegov:AnonymousOrOpen owl:disjointWith sagegov:Registered ,
     sagegov:RestrictedOrLimited ,
@@ -21,12 +20,11 @@ sagegov:NoSecurityStandard owl:disjointWith sagegov:NIST800171 ,
 
 sagegov:hasDuoRestriction a owl:ObjectProperty ;
   rdfs:label "has DUO restriction" ;
-  rdfs:comment "Links a Sage governance profile or dataset to a DUO permission/modifier constraint." .
+  rdfs:comment "Links a Sage data class to a DUO permission/modifier constraint." .
 
 sagegov:RestrictedOrLimited rdfs:subClassOf sagegov:Registered ;
-  rdfs:comment "Restricted / Limited access is a refinement of the registered tier that adds contributor-specific contractual clauses." .
-
-sagegov:RestrictedOrLimited rdfs:subClassOf [
+  rdfs:comment "Restricted / Limited access is a refinement of the registered tier that adds contributor-specific contractual clauses." ;
+  rdfs:subClassOf [
     a owl:Restriction ;
     owl:onProperty sagegov:hasDuoRestriction ;
     owl:someValuesFrom duo:DUO_0000017
@@ -45,6 +43,7 @@ sagegov:DataSharing rdfs:subClassOf <http://purl.obolibrary.org/obo/OBI_0000011>
   rdfs:comment "Planned process where data are disseminated under governance policies." .
 
 sagegov:RequiresSynapseAccount a owl:Class ;
+  owl:sameAs sagegov:Registered;
   owl:equivalentClass [
     a owl:Restriction ;
     owl:onProperty sagegov:requireSynapseAccount ;
@@ -89,6 +88,9 @@ sagegov:DataAccessCommittee a owl:Class ;
 
 sagegov:Data owl:sameAs <http://edamontology.org/data_0006> .
 
+sagegov:DeIdentifiedData rdfs:subClassOf sagegov:Data ;
+  rdfs:comment "Data that has been de-identified".
+
 sagegov:RawData rdfs:subClassOf sagegov:Data ;
   rdfs:label "Raw data" ;
   rdfs:comment "Unprocessed data products such as sequencing fastq files or raw imaging volumes." .
@@ -96,6 +98,18 @@ sagegov:RawData rdfs:subClassOf sagegov:Data ;
 sagegov:ProcessedData rdfs:subClassOf sagegov:Data ;
   rdfs:label "Processed data" ;
   rdfs:comment "Derived data where contributor pipelines have already run primary processing steps." .
+
+sagegov:ImagesAndProcessedBiometricsData rdfs:subClassOf sagegov:ProcessedData ;
+  rdfs:label "Images and processed biometrics data" ;
+  rdfs:comment "Data products that originate from imaging modalities or biometric capture after technical processing." .
+
+sagegov:LinkableImagesAndBiometricData rdfs:subClassOf sagegov:Data ;
+  rdfs:label "Linkable images and biometric data" ;
+  rdfs:comment "Imaging or biometric data that remains linkable to an individual even after processing." .
+
+sagegov:SensitiveData rdfs:subClassOf sagegov:Data ;
+  rdfs:label "Sensitive data" ;
+  rdfs:comment "Data categories subject to heightened contractual or regulatory controls." .
 
 sagegov:SequencingData rdfs:subClassOf sagegov:Data ;
   owl:sameAs <http://edamontology.org/data_2977> ;
@@ -110,3 +124,26 @@ sagegov:SummaryLevelData rdfs:subClassOf sagegov:Data ;
   rdfs:label "Summary-level data" ;
   rdfs:comment "Aggregate data derived from groups of individuals (e.g., counts, statistics)." .
 
+sagegov:ImagesAndProcessedBiometricsDeIdentifiedData owl:equivalentClass [
+    a owl:Class ;
+    owl:intersectionOf (
+      sagegov:ImagesAndProcessedBiometricsData
+      sagegov:DeIdentifiedData
+    )
+  ] .
+
+sagegov:LinkableImagesAndBiometricDeIdentifiedData owl:equivalentClass [
+    a owl:Class ;
+    owl:intersectionOf (
+      sagegov:LinkableImagesAndBiometricData
+      sagegov:DeIdentifiedData
+    )
+  ] .
+
+sagegov:SensitiveDataDeIdentifiedData owl:equivalentClass [
+    a owl:Class ;
+    owl:intersectionOf (
+      sagegov:SensitiveData
+      sagegov:DeIdentifiedData
+    )
+  ] .
