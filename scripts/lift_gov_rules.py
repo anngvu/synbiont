@@ -207,31 +207,21 @@ sagegov:AutomatedClickwrap rdfs:subClassOf sagegov:AccessProcess ;
 
 sagegov:IdentifiabilityRisk rdf:type owl:Class ;
   rdfs:label "Identifiability risk" ;
-  rdfs:comment "Relative likelihood that data could be used to re-identify individuals." .
-
-sagegov:AccessProfileRule rdf:type owl:Class ;
-  rdfs:label "Governance rule" ;
-  rdfs:comment "Helper class for constraints referenced inside the governance module." ;
-  rdfs:isDefinedBy sagegov:AccessProfile ."""
+  rdfs:comment "Relative likelihood that data could be used to re-identify individuals." ."""
 
 
 def camel_case_identifier(value: str, seen: Dict[str, int]) -> str:
     safe_value = value.replace("/", " Or ")
     parts = [p for p in re.split(r"[^0-9A-Za-z]+", safe_value.strip()) if p]
-    if not parts:
-        base = "Profile"
-    else:
-        chunked: List[str] = []
-        for p in parts:
-            if p.isupper():
-                chunked.append(p)
-            else:
-                chunked.append(p[0].upper() + p[1:].lower())
-        base = "".join(chunked)
-    if base in RESERVED_IDENTIFIERS:
-        base = f"{base}Profile"
+    chunked: List[str] = []
+    for p in parts:
+        if p.isupper():
+            chunked.append(p)
+        else:
+            chunked.append(p[0].upper() + p[1:].lower())
+    base = "".join(chunked)
     if base[0].isdigit():
-        base = f"Profile{base}"
+        base = f"_{base}"
     count = seen.get(base, 0)
     if count:
         new_id = f"{base}{count+1}"
@@ -368,11 +358,23 @@ def property_axioms_block() -> str:
     return "\n\n".join(blocks)
 
 
+def needs_data_suffix(text: str) -> bool:
+    collapsed = re.sub(r"[^0-9A-Za-z]+", "", normalize_label_text(text)).lower()
+    return not (collapsed.endswith("data") or collapsed.endswith("information"))
+
+
+def needs_deidentified_suffix(text: str) -> bool:
+    collapsed = re.sub(r"[^0-9A-Za-z]+", "", normalize_label_text(text)).lower()
+    return collapsed.endswith("data") and not collapsed.endswith("deidentifieddata")
+
+
 def collect_profiles(df) -> List[Dict[str, List[str]]]:
-    row_labels = df.iloc[:, 0].ffill().apply(lambda v: normalize_text(v) if not pd.isna(v) else v)
-    data_type_rows = [idx for idx, label in enumerate(row_labels) if label == "Data Type"]
-    row4_idx = data_type_rows[0] if data_type_rows else None
-    row5_idx = data_type_rows[1] if len(data_type_rows) > 1 else None
+    raw_row_labels = df.iloc[:, 0]
+    normalized_labels = raw_row_labels.apply(lambda v: normalize_text(v) if not pd.isna(v) else v)
+    row_labels = normalized_labels.ffill()
+    data_type_rows = [idx for idx, label in enumerate(normalized_labels) if label == "Data Type"]
+    row5_idx = data_type_rows[0] if data_type_rows else None
+    row4_idx = data_type_rows[1] if len(data_type_rows) > 1 else None
     profiles: List[Dict[str, List[str]]] = []
     for col in range(1, df.shape[1]):
         series = df.iloc[:, col]
@@ -420,12 +422,24 @@ def build_turtle(profiles: List[Dict[str, List[str]]]) -> str:
     seen_ids: Dict[str, int] = {}
     for profile in profiles:
         names = [normalize_label_text(name) for name in profile.get("Data Type", [])]
+        from_access_level = False
         if not names:
             access_level_values = profile.get("Access Level", [])
             if access_level_values:
                 names = [normalize_label_text(access_level_values[0])]
+                from_access_level = True
         if not names:
             continue
+        if from_access_level:
+            profile[ROW5_DATA_KEY] = True
+        if profile.get(ROW5_DATA_KEY) and names:
+            if needs_data_suffix(names[0]):
+                names[0] = f"{names[0]} Data"
+            if needs_deidentified_suffix(names[0]) and any("de-ident" in normalize_text(n).lower() for n in profile.get("Data Type", [])):
+                if names[0].lower().endswith(" data"):
+                    names[0] = f"{names[0][:-4].rstrip()} de-identified Data"
+                else:
+                    names[0] = f"{names[0]} de-identified"
         pref_label = names[0]
         alt_labels = [name for name in names[1:] if name != pref_label]
         node_id = camel_case_identifier(pref_label, seen_ids)
@@ -433,17 +447,13 @@ def build_turtle(profiles: List[Dict[str, List[str]]]) -> str:
         is_data = False
         if DATA_TYPE_COLUMNS and col_idx is not None:
             is_data = col_idx in DATA_TYPE_COLUMNS
-        is_data = is_data or bool(profile.get(ROW4_DATA_KEY)) or bool(profile.get(ROW5_DATA_KEY))
+        is_data = is_data or bool(profile.get(ROW4_DATA_KEY)) or bool(profile.get(ROW5_DATA_KEY)) or from_access_level
         if profile.get(ROW5_DATA_KEY):
             is_data = True
         classes: List[str] = []
-        access_profile_flag = not is_data
         label_norm = normalize_label_text(pref_label).lower()
         if label_norm in ALSO_DATA_LABELS:
             is_data = True
-            access_profile_flag = False
-        if access_profile_flag:
-            classes.append("sagegov:AccessProfile")
         entry_lines = []
         if classes:
             entry_lines.append(f"sagegov:{node_id} rdf:type {', '.join(classes)} ;")

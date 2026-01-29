@@ -148,8 +148,8 @@ sagegov:requireSecurityRequirements rdf:type rdf:Property ;
 
 sagegov:requireSynapseAccount rdfs:subPropertyOf sagegov:hasAccessPrerequisite .
 
-sagegov:Synthetic
-  skos:prefLabel "Synthetic" ;
+sagegov:SyntheticData
+  skos:prefLabel "Synthetic Data" ;
   rdfs:subClassOf sagegov:Data ;
   sagegov:accessLevel sagegov:AnonymousOrOpen ;
   sagegov:accessLevelNote "Data that cannot be used alone or with other data to identify a unique individiual" ;
@@ -167,8 +167,8 @@ sagegov:Synthetic
   sagegov:requireSecurity sagegov:NoSecurityStandard ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:Anonymized
-  skos:prefLabel "Anonymized" ;
+sagegov:AnonymizedData
+  skos:prefLabel "Anonymized Data" ;
   rdfs:subClassOf sagegov:Data ;
   dct:description "Data that cannot be associated to a unique individiual" ;
   sagegov:downloadable true ;
@@ -184,8 +184,8 @@ sagegov:Anonymized
   sagegov:accessLevel sagegov:AnonymousOrOpen ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:HIPAASafeHarbor
-  skos:prefLabel "HIPAA Safe Harbor" ;
+sagegov:HIPAASafeHarborData
+  skos:prefLabel "HIPAA Safe Harbor Data" ;
   rdfs:subClassOf sagegov:Data ;
   sagegov:identifiabilityRisk sagegov:LowIdentifiabilityRisk ;
   sagegov:accessLevel sagegov:Registered ;
@@ -205,8 +205,8 @@ sagegov:HIPAASafeHarbor
   sagegov:hasApprovalProcess sagegov:SynapseAccountCheck ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:HIPAAExpertDeIdentified
-  skos:prefLabel "HIPAA Expert de-identified" ;
+sagegov:HIPAAExpertDeIdentifiedData
+  skos:prefLabel "HIPAA Expert de-identified Data" ;
   rdfs:subClassOf sagegov:Data ;
   dct:description "Data that an expert in statistical and scientific method has determined presents a very small risk to be used to identify an invididual" ;
   sagegov:downloadable true ;
@@ -223,8 +223,8 @@ sagegov:HIPAAExpertDeIdentified
   sagegov:accessLevel sagegov:AnonymousOrOpen ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:PseudonymizedGDPR
-  skos:prefLabel "Pseudonymized (GDPR)" ;
+sagegov:PseudonymizedGDPRData
+  skos:prefLabel "Pseudonymized (GDPR) Data" ;
   rdfs:subClassOf sagegov:Data ;
   dct:description "Data where individual identifiers have been replaced by a code or pseudo (false) identifier" ;
   sagegov:downloadable true ;
@@ -241,8 +241,9 @@ sagegov:PseudonymizedGDPR
   sagegov:accessLevel sagegov:AnonymousOrOpen ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:RestrictedOrLimitedProfile rdf:type sagegov:AccessProfile ;
-  skos:prefLabel "Restricted/ Limited" ;
+sagegov:RestrictedOrLimitedData
+  skos:prefLabel "Restricted/ Limited Data" ;
+  rdfs:subClassOf sagegov:Data ;
   sagegov:accessLevel sagegov:RestrictedOrLimited ;
   sagegov:accessLevelNote "Low-risk de-identified data whose usage is limited by contractual clauses set by data contributors" ;
   dct:description "De-identified Data whose usage is limited by contractual clause" ;
@@ -260,8 +261,8 @@ sagegov:RestrictedOrLimitedProfile rdf:type sagegov:AccessProfile ;
   sagegov:hasApprovalProcess sagegov:AutomatedClickwrap ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:OmicsLargeScaleCoded
-  skos:prefLabel "Omics Large scale, coded" ;
+sagegov:OmicsLargeScaleCodedData
+  skos:prefLabel "Omics Large scale, coded Data" ;
   rdfs:subClassOf sagegov:Data ;
   sagegov:identifiabilityRisk sagegov:SomeIdentifiabilityRisk ;
   sagegov:accessLevel sagegov:Controlled ;
@@ -285,8 +286,8 @@ sagegov:OmicsLargeScaleCoded
   sagegov:hasApprovalProcess sagegov:DataAccessCommittee ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:SensitiveDataDeIdentified
-  skos:prefLabel "Sensitive Data de-identified" ;
+sagegov:SensitiveDataDeIdentifiedData
+  skos:prefLabel "Sensitive Data de-identified Data" ;
   skos:altLabel "HIPAA Limited Datasets" ;
   rdfs:subClassOf sagegov:Data ;
   dct:description "Data stripped of 16 direct identifiers that may contain (dates, full zip code, and any age)\n\nData relating to health or sex life, politics or religion" ;
@@ -305,8 +306,8 @@ sagegov:SensitiveDataDeIdentified
   sagegov:accessLevel sagegov:AnonymousOrOpen ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:ImagesAndProcessedBiometricsData
-  skos:prefLabel "Images and processed biometrics data" ;
+sagegov:ImagesAndProcessedBiometricsDeIdentifiedData
+  skos:prefLabel "Images and processed biometrics de-identified Data" ;
   skos:altLabel "de-identified" ;
   rdfs:subClassOf sagegov:Data ;
   dct:description "includes images (MRI, CT scans), voice or typing cadence obtain from technical processing" ;
@@ -346,8 +347,8 @@ sagegov:PersonallyIdentifiableInformation
   sagegov:hasApprovalProcess sagegov:DataAccessCommittee ;
   dct:source "reference/DataTypes-brief-Sept2025.xlsx" .
 
-sagegov:LinkableImagesAndBiometricData
-  skos:prefLabel "Linkable images and biometric data" ;
+sagegov:LinkableImagesAndBiometricDeIdentifiedData
+  skos:prefLabel "Linkable images and biometric de-identified Data" ;
   skos:altLabel "de-identified" ;
   rdfs:subClassOf sagegov:Data ;
   dct:description "includes facial patterns," ;
