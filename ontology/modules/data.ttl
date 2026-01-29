@@ -1,0 +1,61 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sagegov: <https://synapse.org/synbiont/governance/> .
+@prefix task: <http://example.org/todo#> .
+
+# Additional data concepts referenced across modules
+
+sagegov:RawData a owl:Class ;
+  rdfs:label "Raw data" ;
+  rdfs:comment "Unprocessed data products such as sequencing fastq files or raw imaging volumes." .
+
+sagegov:ProcessedData a owl:Class ;
+  rdfs:label "Processed data" ;
+  rdfs:comment "Derived data where contributor pipelines have already run primary processing steps." .
+
+sagegov:SequencingData a owl:Class ;
+  rdfs:label "Sequencing data" ;
+  rdfs:comment "Data generated from sequencing instruments across DNA, RNA, or related assays." .
+
+sagegov:IndividualLevelData a owl:Class ;
+  rdfs:label "Individual-level data" ;
+  rdfs:comment "Data that contains measurements for specific participants or specimens." .
+
+sagegov:SummaryLevelData a owl:Class ;
+  rdfs:label "Summary-level data" ;
+  rdfs:comment "Aggregate data derived from groups of individuals (e.g., counts, statistics)." .
+
+# Task data types and platform references
+
+task:DataType a rdfs:Class ;
+  rdfs:label "Data type" .
+
+task:WGS a task:DataType ;
+  rdfs:label "Whole genome sequencing" .
+
+task:RNAseq a task:DataType ;
+  rdfs:label "RNA-seq" .
+
+task:spatialtx a task:DataType ;
+  rdfs:label "Spatial transcriptomics" .
+
+task:ProcessingPlatform a rdfs:Class ;
+  rdfs:label "Processing platform" .
+
+task:Pluto a task:ProcessingPlatform ;
+  rdfs:label "Pluto" ;
+  rdfs:seeAlso <https://pluto.bio/> .
+
+task:Cavatica a task:ProcessingPlatform ;
+  rdfs:label "Cavatica" ;
+  rdfs:seeAlso <https://cavatica.sbgenomics.com/> .
+
+task:ADWorkbench a task:ProcessingPlatform ;
+  rdfs:label "AD Workbench" ;
+  rdfs:seeAlso <https://adknowledgeportal.synapse.org/> .
+
+task:Terra a task:ProcessingPlatform ;
+  rdfs:label "Terra" ;
+  rdfs:seeAlso <https://terra.bio/> .
