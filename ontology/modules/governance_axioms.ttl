@@ -68,7 +68,7 @@ sagegov:RequiresSynapseAccount a owl:Class ;
     owl:hasValue sagegov:Controlled
   ] .
 
-# Agent roles participating in governance workflows
+# Define implicit agents participating in governance workflows
 
 sagegov:DataContributor a owl:Class ;
   rdfs:subClassOf prov:Agent ;
@@ -84,3 +84,29 @@ sagegov:DataAccessCommittee a owl:Class ;
   rdfs:subClassOf prov:Agent ;
   rdfs:label "Data Access Committee" ;
   rdfs:comment "Panel that reviews sensitive data access requests and issues approvals." .
+
+# Define implicit data classes from example text, connecting sagegov:Data to edam:Data where appropriate
+
+sagegov:Data owl:sameAs <http://edamontology.org/data_0006> .
+
+sagegov:RawData rdfs:subClassOf sagegov:Data ;
+  rdfs:label "Raw data" ;
+  rdfs:comment "Unprocessed data products such as sequencing fastq files or raw imaging volumes." .
+
+sagegov:ProcessedData rdfs:subClassOf sagegov:Data ;
+  rdfs:label "Processed data" ;
+  rdfs:comment "Derived data where contributor pipelines have already run primary processing steps." .
+
+sagegov:SequencingData rdfs:subClassOf sagegov:Data ;
+  owl:sameAs <http://edamontology.org/data_2977> ;
+  rdfs:label "Sequencing data" ;
+  rdfs:comment "Data generated from sequencing instruments across DNA, RNA, or related assays." .
+
+sagegov:IndividualLevelData rdfs:subClassOf sagegov:Data ;
+  rdfs:label "Individual-level data" ;
+  rdfs:comment "Data that contains measurements for specific participants or specimens." .
+
+sagegov:SummaryLevelData rdfs:subClassOf sagegov:Data ;
+  rdfs:label "Summary-level data" ;
+  rdfs:comment "Aggregate data derived from groups of individuals (e.g., counts, statistics)." .
+
